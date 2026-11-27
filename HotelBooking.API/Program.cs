@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MockHotelBookingSystem.Data;
+using HotelManagement.API.Repositories.Interfaces;
+using HotelManagement.API.Repositories.Implementations;
 
 
 
@@ -16,6 +18,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
+// Repository registrations
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+
+builder.Services.AddScoped<IRoomCategoryRepository, RoomCategoryRepository>();
+
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+
+builder.Services.AddScoped<IAmenityRepository, AmenityRepository>();
+
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
