@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 using HotelManagement.API.Services.Interfaces;
 using HotelManagement.API.Services.Implementations;
+=======
+using Microsoft.EntityFrameworkCore;
+using MockHotelBookingSystem.Data;
+
+
+
+>>>>>>> a181239108ee42d7f66fba846690467727e33844
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +21,11 @@ builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    ));
 
 var app = builder.Build();
 
