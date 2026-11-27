@@ -60,5 +60,6 @@ namespace HotelManagement.API.Repositories.Implementations
             _context.Bookings.Update(booking);
             await _context.SaveChangesAsync();
         }
+
     }
 }
