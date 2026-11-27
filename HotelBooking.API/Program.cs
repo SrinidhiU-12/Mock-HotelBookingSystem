@@ -6,8 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<IRoomCategoryService, RoomCategoryService>();
-
-
+builder.Services.AddScoped<IAmenityService, AmenityService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 builder.Services.AddControllers();
 
