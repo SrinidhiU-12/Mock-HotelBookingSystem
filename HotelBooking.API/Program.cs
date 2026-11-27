@@ -97,10 +97,21 @@ builder.Services.AddAuthorization();
 
 // 6. REPOSITORIES AND SERVICES
 
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IHotelService, HotelService>();
+builder.Services.AddScoped<IRoomCategoryService, RoomCategoryService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IAmenityService, AmenityService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+
+// Repositories
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+builder.Services.AddScoped<IRoomCategoryRepository, RoomCategoryRepository>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<IAmenityRepository, AmenityRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
-builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+
 
 
 // 7. BUILD APPLICATION

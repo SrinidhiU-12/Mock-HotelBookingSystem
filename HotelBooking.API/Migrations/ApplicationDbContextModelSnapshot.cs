@@ -22,6 +22,26 @@ namespace HotelBooking.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("MockHotelBookingSystem.Models.Amenity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Amenities");
+                });
+
             modelBuilder.Entity("MockHotelBookingSystem.Models.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
@@ -141,6 +161,21 @@ namespace HotelBooking.API.Migrations
                     b.ToTable("Hotels");
                 });
 
+            modelBuilder.Entity("MockHotelBookingSystem.Models.HotelAmenity", b =>
+                {
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AmenityId")
+                        .HasColumnType("int");
+
+                    b.HasKey("HotelId", "AmenityId");
+
+                    b.HasIndex("AmenityId");
+
+                    b.ToTable("HotelAmenities");
+                });
+
             modelBuilder.Entity("MockHotelBookingSystem.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -222,13 +257,23 @@ namespace HotelBooking.API.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
+                    b.Property<int>("FloorNumber")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
+
+                    b.Property<int>("MaximumGuests")
+                        .HasColumnType("int");
 
                     b.Property<int>("RoomCategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("RoomNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoomStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -256,6 +301,9 @@ namespace HotelBooking.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaximumGuests")
                         .HasColumnType("int");
 
                     b.Property<decimal>("PricePerNight")
@@ -286,6 +334,25 @@ namespace HotelBooking.API.Migrations
                     b.Navigation("Room");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MockHotelBookingSystem.Models.HotelAmenity", b =>
+                {
+                    b.HasOne("MockHotelBookingSystem.Models.Amenity", "Amenity")
+                        .WithMany("HotelAmenities")
+                        .HasForeignKey("AmenityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MockHotelBookingSystem.Models.Hotel", "Hotel")
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Amenity");
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("MockHotelBookingSystem.Models.Payment", b =>
@@ -338,6 +405,11 @@ namespace HotelBooking.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Hotel");
+                });
+
+            modelBuilder.Entity("MockHotelBookingSystem.Models.Amenity", b =>
+                {
+                    b.Navigation("HotelAmenities");
                 });
 #pragma warning restore 612, 618
         }
