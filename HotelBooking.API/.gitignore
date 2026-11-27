@@ -1,0 +1,16 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build output
+**/bin/
+**/obj/
+
+# Visual Studio temporary files
+*.cache
+*.vsidx
+
+# User-specific files
+*.userosscache
+*.sln.docstatesgit add .gitignore
