@@ -1,8 +1,15 @@
+using HotelManagement.API.Services.Interfaces;
+using HotelManagement.API.Services.Implementations;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IHotelService, HotelService>();
+builder.Services.AddScoped<IRoomCategoryService, RoomCategoryService>();
+
 
 builder.Services.AddControllers();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
