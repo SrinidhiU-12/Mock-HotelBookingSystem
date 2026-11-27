@@ -1,6 +1,6 @@
 ﻿
 using HotelManagement.API.DTOs.RoomCategory;
-using HotelManagement.API.Models;
+using MockHotelBookingSystem.Models;
 using HotelManagement.API.Repositories.Interfaces;
 using HotelManagement.API.Services.Interfaces;
 

@@ -19,11 +19,18 @@ public class BookingsController : ControllerBase
         _service = service;
     }
 
-    private string GetUserId()
+    private int GetUserId()
     {
-        return User.FindFirstValue(
-            ClaimTypes.NameIdentifier)
-            ?? throw new UnauthorizedAccessException();
+        var userIdValue = User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(userIdValue, out int userId))
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid user ID.");
+        }
+
+        return userId;
     }
 
     [HttpPost]
@@ -48,15 +55,26 @@ public class BookingsController : ControllerBase
         {
             return Conflict(new { message = ex.Message });
         }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
     }
 
     [HttpGet("my-bookings")]
     public async Task<IActionResult> GetMyBookings()
     {
-        var result = await _service.GetMyBookingsAsync(
-            GetUserId());
+        try
+        {
+            var result = await _service.GetMyBookingsAsync(
+                GetUserId());
 
-        return Ok(result);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
     }
 
     [HttpGet("{id:int}")]
@@ -72,6 +90,10 @@ public class BookingsController : ControllerBase
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
         }
     }
 
@@ -94,6 +116,10 @@ public class BookingsController : ControllerBase
         catch (InvalidOperationException ex)
         {
             return Conflict(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
         }
     }
 }

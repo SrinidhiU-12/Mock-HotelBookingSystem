@@ -7,7 +7,7 @@
         public string CategoryName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal PricePerNight { get; set; }
-
+        public int MaximumGuests { get; set; }
         public Hotel? Hotel { get; set; }
     }
 }

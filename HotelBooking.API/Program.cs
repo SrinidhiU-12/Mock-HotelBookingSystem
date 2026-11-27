@@ -1,56 +1,140 @@
-<<<<<<< HEAD
-using HotelManagement.API.Services.Interfaces;
-using HotelManagement.API.Services.Implementations;
-=======
-using Microsoft.EntityFrameworkCore;
-using MockHotelBookingSystem.Data;
-using HotelManagement.API.Repositories.Interfaces;
+
+using System.Text;
 using HotelManagement.API.Repositories.Implementations;
+using HotelManagement.API.Repositories.Interfaces;
+using HotelManagement.API.Services.Implementations;
+using HotelManagement.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using MockHotelBookingSystem.Data;
+using Scalar.AspNetCore;
 
-
-
->>>>>>> a181239108ee42d7f66fba846690467727e33844
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IHotelService, HotelService>();
-builder.Services.AddScoped<IRoomCategoryService, RoomCategoryService>();
-builder.Services.AddScoped<IAmenityService, AmenityService>();
-builder.Services.AddScoped<IBookingService, BookingService>();
+// 1. DATABASE CONFIGURATION
 
-builder.Services.AddControllers();
+var connectionString = builder.Configuration
+    .GetConnectionString("DefaultConnection");
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "DefaultConnection is missing in appsettings.json.");
+}
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+    options.UseSqlServer(connectionString));
 
-// Repository registrations
-builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 
-builder.Services.AddScoped<IRoomCategoryRepository, RoomCategoryRepository>();
+// 2. CONTROLLER AND OPENAPI CONFIGURATION
 
-builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
 
-builder.Services.AddScoped<IAmenityRepository, AmenityRepository>();
+
+// 3. CORS CONFIGURATION (DEVELOPMENT)
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ScalarDev", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+
+// 4. JWT CONFIGURATION
+
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException(
+        "JWT Key is missing in appsettings.json.");
+
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException(
+        "JWT Issuer is missing in appsettings.json.");
+
+var jwtAudience = builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException(
+        "JWT Audience is missing in appsettings.json.");
+
+if (Encoding.UTF8.GetByteCount(jwtKey) < 32)
+{
+    throw new InvalidOperationException(
+        "JWT Key must be at least 32 bytes for HS256.");
+}
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer = jwtIssuer,
+                ValidAudience = jwtAudience,
+
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtKey)),
+
+                ClockSkew = TimeSpan.Zero
+            };
+    });
+
+
+// 5. AUTHORIZATION
+
+builder.Services.AddAuthorization();
+
+
+// 6. REPOSITORIES AND SERVICES
 
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+
+// 7. BUILD APPLICATION
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
+// 8. SCALAR AND OPENAPI
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
+}
+
+
+// 9. MIDDLEWARE PIPELINE
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
 
+// CORS must run before authentication and authorization.
+app.UseCors("ScalarDev");
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+// 10. RUN
 
 app.Run();

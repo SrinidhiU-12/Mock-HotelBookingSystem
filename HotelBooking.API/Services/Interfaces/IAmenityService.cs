@@ -12,7 +12,8 @@ public interface IAmenityService
     Task<AmenityResponseDto> GetByIdAsync(int id);
 
     Task<AmenityResponseDto> UpdateAsync(
-        int id, UpdateAmenityDto request);
+        int id,
+        UpdateAmenityDto request);
 
     Task DeleteAsync(int id);
 

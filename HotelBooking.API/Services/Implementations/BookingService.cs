@@ -1,6 +1,6 @@
 ﻿
 using HotelManagement.API.DTOs.Booking;
-using HotelManagement.API.Models;
+using MockHotelBookingSystem.Models;
 using HotelManagement.API.Repositories.Interfaces;
 using HotelManagement.API.Services.Interfaces;
 
@@ -16,7 +16,7 @@ public class BookingService : IBookingService
     }
 
     public async Task<BookingResponseDto> CreateAsync(
-        string userId,
+        int userId,
         CreateBookingDto request)
     {
         if (request.CheckInDate.Date < DateTime.UtcNow.Date)
@@ -37,6 +37,12 @@ public class BookingService : IBookingService
         if (room == null)
         {
             throw new KeyNotFoundException("Room not found.");
+        }
+
+        if (room.RoomCategory == null)
+        {
+            throw new InvalidOperationException(
+                "Room category not found.");
         }
 
         if (room.RoomStatus != "Available")
@@ -89,7 +95,7 @@ public class BookingService : IBookingService
     }
 
     public async Task<List<BookingResponseDto>> GetMyBookingsAsync(
-        string userId)
+        int userId)
     {
         var bookings = await _repository.GetByUserIdAsync(userId);
 
@@ -97,7 +103,8 @@ public class BookingService : IBookingService
     }
 
     public async Task<BookingResponseDto> GetByIdAsync(
-        int id, string userId)
+        int id,
+        int userId)
     {
         var booking = await _repository.GetByIdAsync(id);
 
@@ -109,7 +116,7 @@ public class BookingService : IBookingService
         return MapToResponse(booking);
     }
 
-    public async Task CancelAsync(int id, string userId)
+    public async Task CancelAsync(int id, int userId)
     {
         var booking = await _repository.GetByIdAsync(id);
 
@@ -141,7 +148,7 @@ public class BookingService : IBookingService
         return new BookingResponseDto
         {
             Id = booking.Id,
-            UserId = booking.UserId,
+            UserId = booking.UserId.ToString(),
             RoomId = booking.RoomId,
             CheckInDate = booking.CheckInDate,
             CheckOutDate = booking.CheckOutDate,
