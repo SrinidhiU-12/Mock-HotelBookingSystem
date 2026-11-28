@@ -1,0 +1,142 @@
+
+<div class="hotel-page">
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="brand">
+      <span>✦</span> StayEase
+    </div>
+
+    <div class="nav-links">
+      <a class="active">Explore Hotels</a>
+      <a routerLink="/customer/my-bookings">My Bookings</a>
+      <a routerLink="/customer/profile">My Profile</a>
+    </div>
+  </nav>
+
+  <!-- Welcome Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="eyebrow">YOUR JOURNEY BEGINS HERE</p>
+      <h1>Find your perfect <span>stay.</span></h1>
+      <p class="hero-description">
+        Discover comfortable stays and memorable experiences
+        wherever your journey takes you.
+      </p>
+    </div>
+  </section>
+
+  <!-- Search Section -->
+  <section class="search-section">
+    <div class="search-card">
+
+      <div class="search-field">
+        <label>Destination</label>
+        <input
+          type="text"
+          [(ngModel)]="city"
+          placeholder="Where do you want to go?"
+        />
+      </div>
+
+      <div class="search-field">
+        <label>Check-in</label>
+        <input type="date" [(ngModel)]="checkInDate" />
+      </div>
+
+      <div class="search-field">
+        <label>Check-out</label>
+        <input type="date" [(ngModel)]="checkOutDate" />
+      </div>
+
+      <div class="search-field guests-field">
+        <label>Guests</label>
+        <input
+          type="number"
+          min="1"
+          max="20"
+          [(ngModel)]="guests"
+        />
+      </div>
+
+      <button class="search-btn" (click)="searchHotels()">
+        Search
+      </button>
+
+    </div>
+  </section>
+
+  <!-- Hotel Results -->
+  <section class="hotel-results">
+
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">EXPLORE STAYEASE</p>
+        <h2>
+          {{ hasSearched ? 'Search Results' : 'Popular Hotels' }}
+        </h2>
+      </div>
+
+      <button class="reset-btn" (click)="resetSearch()">
+        Clear Search
+      </button>
+    </div>
+
+    <div class="hotel-grid">
+
+      <div class="hotel-card" *ngFor="let hotel of filteredHotels">
+
+        <div class="hotel-image" [ngClass]="hotel.imageClass">
+          <span class="hotel-rating">
+            ★ {{ hotel.rating }} Star
+          </span>
+        </div>
+
+        <div class="hotel-info">
+
+          <p class="hotel-location">⌖ {{ hotel.location }}</p>
+
+          <h3>{{ hotel.name }}</h3>
+
+          <p class="hotel-description">
+            {{ hotel.description }}
+          </p>
+
+          <div class="hotel-bottom">
+            <div class="price">
+              <strong>₹{{ hotel.price }}</strong>
+              <span>/ night</span>
+            </div>
+
+            <button
+              class="details-btn"
+              (click)="viewHotel(hotel)">
+              View Details
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" *ngIf="filteredHotels.length === 0">
+      <h3>No hotels found</h3>
+      <p>Try searching for another destination.</p>
+      <button class="details-btn" (click)="resetSearch()">
+        View All Hotels
+      </button>
+    </div>
+
+    <!-- Selected Hotel Preview -->
+    <div class="selected-hotel" *ngIf="selectedHotel">
+      <h2>{{ selectedHotel.name }}</h2>
+      <p>{{ selectedHotel.description }}</p>
+      <p>{{ selectedHotel.location }}</p>
+      <p>₹{{ selectedHotel.price }} per night</p>
+    </div>
+
+  </section>
+
+</div>
