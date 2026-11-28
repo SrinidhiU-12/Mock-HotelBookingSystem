@@ -1,0 +1,76 @@
+
+<div class="hotel-details-page">
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a routerLink="/customer/hotels" class="brand">StayEase</a>
+
+    <div class="nav-links">
+      <a routerLink="/customer/hotels">Explore Hotels</a>
+      <a routerLink="/customer/my-bookings">My Bookings</a>
+    </div>
+  </nav>
+
+  <!-- Hotel Details -->
+  <section class="hotel-container">
+
+    <a routerLink="/customer/hotels" class="back-link">
+      ← Back to Hotels
+    </a>
+
+    <div class="hotel-header">
+      <div>
+        <p class="section-label">HOTEL INFORMATION</p>
+        <h1>{{ hotel.name }}</h1>
+        <p class="location">📍 {{ hotel.location }}</p>
+      </div>
+
+      <div class="rating">
+        ⭐ {{ hotel.rating }} / 5
+      </div>
+    </div>
+
+    <!-- Hotel Image Placeholder -->
+    <div class="hotel-image">
+      <span>{{ hotel.name }}</span>
+    </div>
+
+    <!-- Description and Booking -->
+    <div class="details-grid">
+
+      <div class="hotel-description">
+        <h2>About this hotel</h2>
+        <p>{{ hotel.description }}</p>
+
+        <h2>Amenities & Facilities</h2>
+
+        <div class="amenities-list">
+          <div class="amenity" *ngFor="let amenity of hotel.amenities">
+            <span>✓</span>
+            {{ amenity }}
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-card">
+        <p class="price-label">Starting from</p>
+
+        <h2>
+          ₹{{ hotel.price }}
+          <span>/ night</span>
+        </h2>
+
+        <p class="booking-note">
+          Prices are displayed as sample frontend data.
+        </p>
+
+        <button routerLink="/customer/rooms">
+          View Available Rooms
+        </button>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
